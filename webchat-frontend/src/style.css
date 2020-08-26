@@ -1,0 +1,166 @@
+html, body {
+    height: 100%;
+    margin: 0;
+    color: rgb(16, 16, 16);
+	background: #ffdb9d;
+	background: -webkit-linear-gradient(to right, #ffdb9d, #ffb97b, #FA8072, #CD5C5C, #ac3836);
+    background: linear-gradient(to right, #ffdb9d, #ffb97b, #FA8072, #CD5C5C, #ac3836);
+    font-family: Montserrat, sans-serif;
+}
+
+body {
+    display: flex;
+    cursor: default;
+    justify-content: center;
+    align-items: center;
+}
+
+h5.card-header {
+    color:#343A40;
+}
+
+img {
+    max-width: 100%;
+    max-height: auto;
+}
+
+svg {
+    -webkit-filter: invert(100%); /* safari 6.0 - 9.0 */
+    filter: invert(100%);
+    max-width: 100%;
+    max-height: auto;
+}
+
+#brand {
+    margin-bottom: -15px;
+}
+
+.logo {
+    height: 70px;
+    margin-top: -6px;
+}
+
+.title { 
+    font-family: Pacifico; 
+    font-size: 36px; 
+    font-style: normal; 
+    font-variant: normal; 
+    font-weight: 700; 
+    line-height: 23px;
+    cursor: pointer;
+    margin-top: 6px;
+    margin-left: -16px;
+}
+
+.navbar-center
+{
+    position: absolute;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    margin-bottom: -5px;
+}
+
+#dropdown01 {
+    margin-right: 30px;
+    margin-bottom: -5px;
+}
+
+.online-icon {
+    height: 22%;
+    width: 22%;
+    padding-bottom: 2px;
+    margin-left: -20px;
+}
+
+.invert { 
+    -webkit-filter: invert(.75); /* safari 6.0 - 9.0 */
+    filter: invert(.75);  
+}
+
+.container {
+    display: flex;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+}
+
+.row {
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#home-screen-row {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+    justify-self: center;
+    justify-items: center;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#view-profile-row {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+    justify-self: center;
+    justify-items: center;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#view-profile-col {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+    justify-self: center;
+    justify-items: center;
+    justify-content: center;
+}
+
+#edit-profile-row {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+    justify-self: center;
+    justify-items: center;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+#edit-profile-col {
+    display: flex;
+    height: 100%;
+    align-items: center;
+    align-self: center;
+    align-content: center;
+    justify-self: center;
+    justify-items: center;
+    justify-content: center;
+}
+
+#channel-card {
+    height: 450px;
+    width: 220px;
+}
+
+#message-card {
+    height: 500px;
+    width: 600px;
+}
+
+
+#view-profile-col {
+    color: whitesmoke;
+}
+
