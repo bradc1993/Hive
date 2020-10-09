@@ -1,4 +1,4 @@
-const BASE_URL = "https://whispering-plains-19105.herokuapp.com/"
+const BASE_URL = "https://flatiron-hive.herokuapp.com/"
 const USERS_URL = `${BASE_URL}/users`
 const CHANNELS_URL = `${BASE_URL}/channels`
 const MESSAGES_URL = `${BASE_URL}/messages`
@@ -10,7 +10,7 @@ let currentChannel;
 document.addEventListener("DOMContentLoaded", () => {
 
     function openConnection() {
-        return new WebSocket("ws://localhost:3000/cable")
+        return new WebSocket("wss://flatiron-hive.herokuapp.com/cable")
     }
 
     chatWebSocket = openConnection()
