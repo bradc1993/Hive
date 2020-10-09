@@ -12,6 +12,9 @@
 
 ActiveRecord::Schema.define(version: 2020_07_27_202600) do
 
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
   create_table "channels", force: :cascade do |t|
     t.string "title"
     t.datetime "created_at", precision: 6, null: false
@@ -21,8 +24,8 @@ ActiveRecord::Schema.define(version: 2020_07_27_202600) do
   create_table "messages", force: :cascade do |t|
     t.string "content"
     t.string "username"
-    t.integer "channel_id", null: false
-    t.integer "user_id", null: false
+    t.bigint "channel_id", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["channel_id"], name: "index_messages_on_channel_id"
