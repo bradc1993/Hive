@@ -103,11 +103,9 @@ Rails.application.configure do
   # config.active_record.database_resolver = ActiveRecord::Middleware::DatabaseSelector::Resolver
   # config.active_record.database_resolver_context = ActiveRecord::Middleware::DatabaseSelector::Resolver::Session
 
-  config.action_cable.url = "ws://localhost:3000/cable"
-
   config.action_cable.allowed_request_origins = [
-    'http://localhost:3001',
-    'https://musing-spence-dec69b.netlify.app'
+    config.action_cable.allowed_request_origins = ['https://flatiron-hive.herokuapp.com', 'http://flatiron-hive.herokuapp.com']
+    config.action_cable.disable_request_forgery_protection = true
   ]
 
 end
