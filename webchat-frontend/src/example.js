@@ -1,3 +1,4 @@
+//reference project
 document.addEventListener("DOMContentLoaded", () => {
   const chatWebSocket = openConnection()
   chatWebSocket.onopen = (event) => {
