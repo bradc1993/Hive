@@ -1,4 +1,4 @@
-const BASE_URL = "http://localhost:3000"
+const BASE_URL = "https://whispering-plains-19105.herokuapp.com/"
 const USERS_URL = `${BASE_URL}/users`
 const CHANNELS_URL = `${BASE_URL}/channels`
 const MESSAGES_URL = `${BASE_URL}/messages`
