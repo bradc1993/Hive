@@ -12,7 +12,7 @@
 
     <!-- custom CSS -->
     <link rel="stylesheet" type="text/css" href="./src/style.css">
-    <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Pacifico" />
+    <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&display=swap" rel="stylesheet">
 
     <title>Hive</title>
@@ -37,11 +37,9 @@
         </div>
     </div>
 
-    <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top" id="navbar">
+    <nav class="navbar navbar-expand-sm navbar-dark bg-dark fixed-top" id="navbar">
         <div class="navbar-brand" id="brand">
-            <a href="#" id="take-me-home">
-                <img class="navbar-brand logo" href="#" src="./imgs/noun_hive_2022627.svg" alt="Hive">
-            </a>
+            <img class="navbar-brand logo" src="./imgs/noun_hive_2022627.svg" alt="Hive">
         </div>
         <h5 class="navbar-brand title">Hive</h5>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
@@ -92,11 +90,11 @@
     </div>
 
 
-    <div class="container" id="home-screen-container" style="display:none">
+    <div class="container-fluid" id="home-screen-container" style="display:none">
         <div class="row h-100" id="home-screen-row">
 
-            <div class="col-md-4 col-xl-3">
-                <div class="card d-flex border-secondary" id="channel-card">
+            <div class="col-3" id="channel-user-display">
+                <div class="card d-flex border-secondary" id="channel-user-card">
                     <h5 class="card-header text-center">channel list</h5>
                     <ul class="list-group list-group-flush mx-auto overflow-auto" id="channel-list">
                         <!--Channels display here-->
@@ -108,7 +106,7 @@
                                     aria-haspopup="true" aria-expanded="false">
                                     create new channel
                                 </p>
-                                <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <div class="dropdown-menu" id="create-channel-dropdown" aria-labelledby="dropdownMenuButton">
                                     <form class="form-inline">
                                         <div class="form-group alig">
                                             <input type="text" class="form-control text-center" id="create-channel-form"
@@ -125,7 +123,7 @@
             </div>
 
 
-            <div class="col-md-8 col-xl-6" id="message-display">
+            <div class="col-6" id="message-display">
                 <div class="card d-flex border-secondary" id="message-card">
                     <h5 class="card-header text-center">messages</h5>
                     <div class="card-body overflow-auto" id="message-list">
@@ -146,8 +144,8 @@
                 </div>
             </div>
 
-            <div class="col-md-5 col-xl-4" id="user-display">
-                <div class="card d-flex border-secondary" id="channel-card">
+            <div class="col-3" id="channel-user-display">
+                <div class="card d-flex border-secondary" id="channel-user-card">
                     <h5 class="card-header text-center">users</h5>
                     <ul class="list-group list-group-flush mx-auto overflow-auto text-center" id="user-list">
                         <!--Users display here-->
@@ -165,7 +163,7 @@
 
 
         <!-- Optional JavaScript -->
-        <script src="./src/refactored_index_2.js"></script>
+        <script src="./src/index.js"></script>
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
             integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"

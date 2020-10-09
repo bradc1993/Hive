@@ -3,15 +3,17 @@ const USERS_URL = `${BASE_URL}/users`
 const CHANNELS_URL = `${BASE_URL}/channels`
 const MESSAGES_URL = `${BASE_URL}/messages`
 
+//CURRENT USER & CHANNEL
 let currentUser;
 let currentChannel;
 
 document.addEventListener("DOMContentLoaded", () => {
+
     function openConnection() {
         return new WebSocket("ws://localhost:3000/cable")
     }
 
-    const chatWebSocket = openConnection()
+    chatWebSocket = openConnection()
     chatWebSocket.onopen = (event) => {
         const subscribeMsg = { "command": "subscribe", "identifier": "{\"channel\":\"ChatMessagesChannel\"}" }
         chatWebSocket.send(JSON.stringify(subscribeMsg))
@@ -23,33 +25,26 @@ document.addEventListener("DOMContentLoaded", () => {
         userWebSocket.send(JSON.stringify(subscribeUser))
     };
 
-    liveChatSocket(chatWebSocket);
-    liveUserSocket(userWebSocket);
 
-    //LOG IN BUTTON
-    const loginForm = document.querySelector('#login-form')
-    function logIn(users) {
-        loginForm.addEventListener("submit", (event) => {
-            event.preventDefault();
-            let nameInput = event.target.name.value;
-            let returnArray = users.filter(user => user.username == nameInput);
-            if (returnArray.length > 0) {
-                currentUser = returnArray[0];
-                currentUser['online'] = true;
-                console.log(currentUser);
-                fetch(MESSAGES_URL).then(res => res.json()).then(messages => renderChatHistory(messages));
-                fetch(CHANNELS_URL).then(res => res.json()).then(channels => renderChannelList(channels));
-                renderHomePage(currentUser);
-                renderUserList(users);
-                userJoin(userWebSocket)
-            } else {
-                alert('User not found, please try again.')
-                //createCurrentUser(currentUser, userWebSocket);
-            }
-        })
-    };
-    
-    //SEND BUTTON
+    //LOG OUT CLICK LISTENER
+    const logoutBtn = document.querySelector('#logout')
+    logoutBtn.onclick = () => {
+        const msg = {
+            "command": "message",
+            "identifier": "{\"channel\":\"UsersOnlineChannel\"}",
+            "data": `{
+            \"action\": \"user_leave\",
+            \"username\": \"${currentUser.username}\"
+          }`
+        }
+        console.log(JSON.stringify(msg))
+        userWebSocket.send(JSON.stringify(msg));
+        renderLogOut();
+        location.reload();
+    }
+
+
+    //SEND CLICK LISTENER
     const sendBtn = document.querySelector('#send-btn')
     sendBtn.onclick = () => {
         event.preventDefault()
@@ -67,21 +62,55 @@ document.addEventListener("DOMContentLoaded", () => {
         \"channel_id\": \"${currentChannel.id}\"
       }`
         }
-
         console.log(msg)
-
         chatWebSocket.send(JSON.stringify(msg))
         chatField.value = ""
     };
 
-    fetch(USERS_URL).then(res => res.json()).then(users => logIn(users))
+
+    //LOGIN CLICK EVENT LISTENER (START OF EVENT CHAIN)
+    const loginForm = document.querySelector('#login-form')
+    loginForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        const nameInput = event.target.name.value;
+        fetch(USERS_URL)
+            .then(res => res.json())
+            .then(users => validateUsername(users, nameInput))
+        // event.target.name.value = "";
+    });
+
+    function validateUsername(users, nameInput) {
+        let returnArray = users.filter(user => user.username === nameInput)
+        if (returnArray.length > 0) {
+            currentUser = returnArray[0];
+            currentUser['online'] = true;
+            console.log(currentUser);
+            liveChatSocket(chatWebSocket);
+            liveUserSocket(userWebSocket);
+            fetch(MESSAGES_URL).then(res => res.json()).then(messages => renderChatHistory(messages));
+            fetch(CHANNELS_URL).then(res => res.json()).then(channels => renderChannelList(channels));
+            renderHomePage(currentUser);
+            renderUserList(users);
+            userJoin(userWebSocket);
+            window.addEventListener("beforeunload", (event) => {
+                userLeave(userWebSocket);
+            })
+        } else {
+            alert('User not found, please try again.')
+            //createCurrentUser(currentUser, userWebSocket);
+        }
+    }
 });
+
+
 
 //CHAT SOCKET
 function liveChatSocket(chatWebSocket) {
     chatWebSocket.onmessage = event => {
         const result = JSON.parse(event.data)
-        // console.log("chatsocket", result)
+        if (result["identifier"]) {
+            console.log(result)
+        }
 
         if (result["message"]["content"]) {
             const newMsg = result["message"]
@@ -89,11 +118,15 @@ function liveChatSocket(chatWebSocket) {
         }
     }
 };
+
 //USER SOCKET
 function liveUserSocket(userWebSocket) {
     userWebSocket.onmessage = event => {
         const result = JSON.parse(event.data)
-        console.log(result)
+        if (result["identifier"]) {
+            console.log(result)
+        }
+
         if (result["message"]["username"]) {
             //console.log(result["message"]["username"])
             // const userArray = [...result["message"]["username"]]
@@ -102,17 +135,19 @@ function liveUserSocket(userWebSocket) {
         }
 
         if (result["message"]["new_user"]) {
-            console.log(result)
             setUserOnline(result["message"]["new_user"])
             //audioJoin()
         }
 
-        // if (result["message"]["bye_user"]) {
-        //     setUserOffline(result["message"]["bye_user"])
-        //     //audioLeave()
-        // }
+        if (result["message"]["bye_user"]) {
+            setUserOffline(result["message"]["bye_user"])
+            //  audioLeave()
+            // }
+        }
     }
-}
+};
+
+
 
 function renderHomePage() {
     const loginContainer = document.querySelector('#login-container');
@@ -124,7 +159,27 @@ function renderHomePage() {
     homeScreenContainer.style.display = "block";
     welcomeMessage.innerText = `What's the buzz, ${currentUser.username}?`
     welcomeMessage.style.display = "inline";
-}
+};
+
+
+
+function renderLogOut() {
+    // const messageList = document.getElementById('message-list')
+    // messageList.innerHTML = "";
+    // const userList = document.getElementById('user-list')
+    // userList.innerHTML = "";
+    // const loginContainer = document.querySelector('#login-container');
+    const profileMenu = document.querySelector('#profile-menu');
+    const homeScreenContainer = document.querySelector('#home-screen-container');
+    const welcomeMessage = document.querySelector('#welcome-message')
+    // loginContainer.style.display = "flex";
+    profileMenu.style.display = "none";
+    homeScreenContainer.style.display = "none";
+    //welcomeMessage.innerText = `What's the buzz, ${currentUser.username}?`
+    welcomeMessage.style.display = "none";
+};
+
+
 
 function renderChatHistory(messages) {
     const messageList = document.querySelector('#message-list')
@@ -147,6 +202,8 @@ function renderChatHistory(messages) {
     }
 }
 
+
+
 function renderNewMessage(newMsg) {
     const messageList = document.querySelector('#message-list')
     const messageItem = document.createElement('div')
@@ -166,10 +223,13 @@ function renderNewMessage(newMsg) {
     scrollDown();
 }
 
+
+
 function renderChannelList(channels) {
+    const channelList = document.querySelector('#channel-list');
+    channelList.innerHTML = ""
     for (const channel of channels) {
         const currentMessageList = document.querySelector('#message-list').children;
-        const channelList = document.querySelector('#channel-list');
         const channelItem = document.createElement('li');
         channelItem.className = "list-group-item"
         channelItem.innerText = channel.title
@@ -185,10 +245,14 @@ function renderChannelList(channels) {
     }
 }
 
+
+
 function scrollDown() {
     const messageListScroll = document.querySelector("#message-list")
     messageListScroll.scrollTop = messageListScroll.scrollHeight
 }
+
+
 
 function currentTime() {
     var date = new Date();
@@ -201,20 +265,39 @@ function currentTime() {
     return time;
 }
 
+
+
 function userJoin(websocket) {
-    sessionStorage.setItem('username', currentUser.username)
-    console.log(sessionStorage.getItem('username'))
+    //sessionStorage.setItem('username', currentUser.username)
+    //console.log(sessionStorage.getItem('username'))
     const msg = {
         "command": "message",
         "identifier": "{\"channel\":\"UsersOnlineChannel\"}",
         "data": `{
         \"action\": \"user_join\",
-        \"username\": \"${sessionStorage.getItem('username')}\"
+        \"username\": \"${currentUser.username}\"
       }`
     }
     console.log(JSON.stringify(msg))
     websocket.send(JSON.stringify(msg));
 }
+
+
+
+function userLeave(websocket) {
+    const msg = {
+        "command": "message",
+        "identifier": "{\"channel\":\"UsersOnlineChannel\"}",
+        "data": `{
+        \"action\": \"user_leave\",
+        \"username\": \"${currentUser.username}\"
+      }`
+    }
+    console.log(JSON.stringify(msg))
+    websocket.send(JSON.stringify(msg));
+}
+
+
 
 function renderUserList(userArray) {
     const userList = document.getElementById('user-list')
@@ -224,7 +307,7 @@ function renderUserList(userArray) {
     onlineArray.sort().forEach(user => {
         const userItem = document.createElement('li')
         userItem.innerHTML = `
-        <li class="user online list-group-item mx-auto"><img class="online-icon" user-id="${user.id}" src="./imgs/green_dot.svg" alt="Online" style="display:inline;">${user.username}</li>
+        <li class="user online list-group-item mx-auto"><img class="online-icon" username="${user.username}" src="./imgs/green_dot.svg" alt="Online" style="display:inline;">${user.username}</li>
         `
         userList.appendChild(userItem)
     })
@@ -237,48 +320,46 @@ function renderUserList(userArray) {
     })
 }
 
+
+
 function setUserOnline(username) {
     fetch(USERS_URL + `/${currentUser.id}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
-            Accept: "application/json" 
+            Accept: "application/json"
         },
         body: JSON.stringify({
             online: true
         })
     })
+    console.log(document.querySelector(`img.online-icon[username="${username}"]`))
     let onlineIcon = document.querySelector(`img.online-icon[username="${username}"]`)
     onlineIcon.style.display = "inline";
 }
 
-// function userLeave(websocket) {
-//     const msg = {
-//         "command": "message",
-//         "identifier": "{\"channel\":\"UsersOnlineChannel\"}",
-//         "data": `{
-//         \"action\": \"user_leave\",
-//         \"username\": \"${sessionStorage.getItem('username')}\"
-//       }`
-//     }
-//     console.log(JSON.stringify(msg))
-//     websocket.send(JSON.stringify(msg));
-// }
 
-// function setUserOffline(username) {
-//     fetch(USERS_URL + `/${currentUser.id}`, {
-//         method: "PATCH",
-//         headers: {
-//             "Content-Type": "application/json",
-//             Accept: "application/json" 
-//         },
-//         body: JSON.stringify({
-//             online: false
-//         })
-//     })
-//     let onlineIcon = document.querySelector(`img.online-icon[username="${username}"]`)
-//     onlineIcon.style.display = "none";
-// }
+
+function setUserOffline(user) {
+    console.log(user)
+
+    fetch(USERS_URL + `/${user.id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json"
+        },
+        body: JSON.stringify({
+            online: false
+        })
+    })
+        .then(res => res.json())
+        .then(res => console.log(res))
+
+
+    let onlineIcon = document.querySelector(`img.online-icon[username="${user.username}"]`)
+    onlineIcon.style.display = "none";
+}
 
 // function renderToUserList(username) {
 //     const userList = document.getElementById('user-list')
