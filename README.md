@@ -1,4 +1,2 @@
 # Hive
-Flatiron Mod 3 Project, made in collaboration with Michael Sotir.
-
-Video demo coming soon!
+Live chatroom app, built in collaboration with Michael Sotir. Mod 3 project for Flatiron School.
